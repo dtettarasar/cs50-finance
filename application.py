@@ -121,8 +121,20 @@ def quote():
 def register():
     """Register user"""
 
-    if request.method == "GET":
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+        password_repeat = request.form.get("password-repeat")
+
+        print(username, password, password_repeat)
+
+        return redirect("/")
+
+    elif request.method == "GET":
+        # print("test")
         return render_template("register.html")
+
 
     # return apology("TODO")
 
