@@ -127,7 +127,16 @@ def register():
         password = request.form.get("password")
         password_repeat = request.form.get("password-repeat")
 
+        test_name_exist = db.execute("SELECT username FROM users WHERE username = ?", username)
+
         print(username, password, password_repeat)
+        print(test_name_exist)
+
+        if test_name_exist:
+            return apology("username not available", 403)
+        elif password != password_repeat:
+            return apology("Password and confirm password does not match", 403)
+
 
         return redirect("/")
 
