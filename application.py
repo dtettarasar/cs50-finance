@@ -137,7 +137,6 @@ def register():
         elif password != password_repeat:
             return apology("Password and confirm password does not match", 403)
 
-
         return redirect("/")
 
     elif request.method == "GET":
