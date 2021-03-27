@@ -120,9 +120,11 @@ def quote():
         quote_symbol = request.form.get("symbol")
         quote_data = lookup(quote_symbol)
 
-        print(quote_data)
-
-        return render_template("quoted.html")
+        # print(quote_data)
+        if quote_data == None:
+            return apology("invalid symbol", 403)
+        else:
+            return render_template("quoted.html", quote_data=quote_data)
 
     elif request.method == "GET":
         return render_template("quote.html")
