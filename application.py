@@ -114,7 +114,14 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+
+    if request.method == "POST":
+        return apology("TODO")
+
+    elif request.method == "GET":
+        return render_template("quote.html")
+
+    # return apology("TODO")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -147,7 +154,6 @@ def register():
         return redirect("/")
 
     elif request.method == "GET":
-        # print("test")
         return render_template("register.html")
 
 
