@@ -116,6 +116,10 @@ def quote():
     """Get stock quote."""
 
     if request.method == "POST":
+
+        quote_symbol = request.form.get("symbol")
+        print(quote_symbol)
+
         return render_template("quoted.html")
 
     elif request.method == "GET":
@@ -139,8 +143,15 @@ def register():
         # print(username, password, password_repeat)
         # print(test_name_exist)
 
-        if test_name_exist:
+        if not username:
+            return apology("must provide username", 403)
+
+        elif test_name_exist:
             return apology("username not available", 403)
+
+        if not password:
+            return apology("must provide password", 403)
+
         elif password != password_repeat:
             return apology("Password and confirm password does not match", 403)
 
