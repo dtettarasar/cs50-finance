@@ -43,7 +43,10 @@ db = SQL("sqlite:///finance.db")
 symbols_table = db.execute("CREATE TABLE IF NOT EXISTS symbols (id INTEGER, symbol TEXT NOT NULL, PRIMARY KEY(id))")
 
 # One table to track transactions (ID, ID User, ID Symbol, Type(sale or purchase), shares, unit value)
-transactions_table = db.execute("CREATE TABLE IF NOT EXISTS transactions (id INTEGER, id_symbol INTEGER, id_user INTEGER, transaction_type TEXT NOT NULL, shares INTEGER, unit_value NUMERIC NOT NULL, PRIMARY KEY(id))")
+transactions_history_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_history (id INTEGER, id_symbol INTEGER, id_user INTEGER, id_transaction_type INTEGER, shares INTEGER, unit_value NUMERIC NOT NULL, transaction_dt DATE, PRIMARY KEY(id))")
+
+# One table for transaction type
+transactions_type_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_type (id INTEGER, transaction_type TEXT NOT NULL, PRIMARY KEY(id))")
 
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
 wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
