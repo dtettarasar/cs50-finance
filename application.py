@@ -38,10 +38,15 @@ Session(app)
 db = SQL("sqlite:///finance.db")
 
 # Create additionnal tables in the database :
-# One table to track transactions (ID, ID User, Type(sale or purchase), shares, unit value, symbol ID)
-# One table to record ID (ID and Symbol)
-# One table to manage users's wallet (ID, ID User, symbolID, shares)
 
+# One table to record symbols (ID and Symbol)
+symbols_table = db.execute("CREATE TABLE IF NOT EXISTS symbols (id INTEGER, symbol TEXT NOT NULL, PRIMARY KEY(id))")
+
+# One table to track transactions (ID, ID User, ID Symbol, Type(sale or purchase), shares, unit value)
+transactions_table = db.execute("CREATE TABLE IF NOT EXISTS transactions (id INTEGER, id_symbol INTEGER, id_user INTEGER, transaction_type TEXT NOT NULL, shares INTEGER, unit_value NUMERIC NOT NULL, PRIMARY KEY(id))")
+
+# One table to manage users's wallet (ID, ID Symbol, ID User, shares)
+wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
