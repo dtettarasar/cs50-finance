@@ -48,6 +48,16 @@ transactions_history_table = db.execute("CREATE TABLE IF NOT EXISTS transactions
 # One table for transaction type
 transactions_type_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_type (id INTEGER, transaction_type TEXT NOT NULL, PRIMARY KEY(id))")
 
+# Create the initial transactions type values
+def create_transaction_type(type_value):
+    check_value_exist = db.execute("SELECT transaction_type FROM transactions_type WHERE transaction_type = ?", type_value)
+
+    if check_value_exist == []:
+        create_new_value = db.execute("INSERT INTO transactions_type (transaction_type) VALUES (?)", type_value)
+
+create_transaction_type("purchase")
+create_transaction_type("sale")
+
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
 wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
 
