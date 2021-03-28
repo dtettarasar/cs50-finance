@@ -37,6 +37,12 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
+# Create additionnal tables in the database :
+# One table to track transactions (ID, ID User, Type(sale or purchase), shares, unit value, symbol ID)
+# One table to record ID (ID and Symbol)
+# One table to manage users's wallet (ID, ID User, symbolID, shares)
+
+
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
@@ -53,7 +59,15 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+
+        #redirect user to homepage
+        return redirect("/")
+
+    else:
+        return render_template("buy.html")
+
+    #return apology("TODO")
 
 
 @app.route("/history")
