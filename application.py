@@ -83,13 +83,26 @@ def buy():
         stock_data = lookup(stock_symbol)
         stock_shares = int(request.form.get("shares"))
 
-        # print(stock_data)
+        print(stock_data["symbol"])
         # print(stock_shares)
         if stock_data == None:
             return apology("invalid symbol", 403)
         elif stock_shares <= 0:
             return apology("invalid shares", 403)
 
+        # record the symbol in our database
+
+        test_symbol_exist = db.execute("SELECT symbol FROM symbols WHERE symbol = ?", stock_data["symbol"])
+
+        # print(test_symbol_exist)
+
+        # symbol isn't in the db
+        if test_symbol_exist == []:
+            insert_new_symbol = db.execute("INSERT INTO symbols (symbol) VALUES (?)", stock_data["symbol"])
+
+        get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_data['symbol'])
+
+        print(get_symbol_id)
 
         #redirect user to homepage
         return redirect("/")
