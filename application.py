@@ -58,6 +58,8 @@ def create_transaction_type(type_value):
 create_transaction_type("purchase")
 create_transaction_type("sale")
 
+PURCHASE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_type = ?", "purchase")
+
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
 wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
 
@@ -83,7 +85,7 @@ def buy():
         stock_data = lookup(stock_symbol)
         stock_shares = int(request.form.get("shares"))
 
-        print(stock_data["symbol"])
+        print(stock_data)
         # print(stock_shares)
         if stock_data == None:
             return apology("invalid symbol", 403)
@@ -95,14 +97,21 @@ def buy():
         test_symbol_exist = db.execute("SELECT symbol FROM symbols WHERE symbol = ?", stock_data["symbol"])
 
         # print(test_symbol_exist)
-
-        # symbol isn't in the db
         if test_symbol_exist == []:
             insert_new_symbol = db.execute("INSERT INTO symbols (symbol) VALUES (?)", stock_data["symbol"])
 
         get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_data['symbol'])
 
-        print(get_symbol_id)
+        # print(session["user_id"])
+        # print(get_symbol_id)
+        # print(PURCHASE_ID)
+
+        # get_symbol_id, session["user_id"], PURCHASE_ID, stock_shares, stock_data["price"]
+
+        print(type(get_symbol_id[0]["id"]), type(session["user_id"]), type(PURCHASE_ID[0]["id"]), type(stock_shares), type(stock_data["price"]))
+
+        # record a new transaction
+        # insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value) VALUES (?, ?, ?, ?, ?)", get_symbol_id["id"], session["user_id"], PURCHASE_ID["id"], stock_shares, stock_data["price"])
 
         #redirect user to homepage
         return redirect("/")
