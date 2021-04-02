@@ -6,6 +6,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 from helpers import apology, login_required, lookup, usd
 
@@ -93,25 +94,17 @@ def buy():
             return apology("invalid shares", 403)
 
         # record the symbol in our database
-
         test_symbol_exist = db.execute("SELECT symbol FROM symbols WHERE symbol = ?", stock_data["symbol"])
 
-        # print(test_symbol_exist)
         if test_symbol_exist == []:
             insert_new_symbol = db.execute("INSERT INTO symbols (symbol) VALUES (?)", stock_data["symbol"])
 
         get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_data['symbol'])
 
-        # print(session["user_id"])
-        # print(get_symbol_id)
-        # print(PURCHASE_ID)
-
-        # get_symbol_id, session["user_id"], PURCHASE_ID, stock_shares, stock_data["price"]
-
-        print(type(get_symbol_id[0]["id"]), type(session["user_id"]), type(PURCHASE_ID[0]["id"]), type(stock_shares), type(stock_data["price"]))
+        transaction_time = datetime.now()
 
         # record a new transaction
-        # insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value) VALUES (?, ?, ?, ?, ?)", get_symbol_id["id"], session["user_id"], PURCHASE_ID["id"], stock_shares, stock_data["price"])
+        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], PURCHASE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
 
         #redirect user to homepage
         return redirect("/")
