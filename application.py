@@ -87,11 +87,18 @@ def buy():
         stock_shares = int(request.form.get("shares"))
 
         print(stock_data)
-        # print(stock_shares)
+
         if stock_data == None:
             return apology("invalid symbol", 403)
         elif stock_shares <= 0:
             return apology("invalid shares", 403)
+
+        get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"]);
+
+        cost = stock_shares * stock_data["price"]
+
+        if get_user_cash[0]['cash'] < cost:
+            return apology("insufficient funds", 403)
 
         # record the symbol in our database
         test_symbol_exist = db.execute("SELECT symbol FROM symbols WHERE symbol = ?", stock_data["symbol"])
@@ -105,6 +112,9 @@ def buy():
 
         # record a new transaction
         insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], PURCHASE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
+
+        # update user's cash amount in db
+        # update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", , session["user_id"])
 
         #redirect user to homepage
         return redirect("/")
