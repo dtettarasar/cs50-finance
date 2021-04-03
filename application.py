@@ -77,6 +77,7 @@ def index():
     get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
     cash_value = round(get_user_cash[0]["cash"], 2)
     get_wallet_list = db.execute("SELECT * FROM wallets WHERE id_user = ?", session["user_id"])
+    total_wallet_value = cash_value
 
     def add_data_wallet_item(wallet_dict):
         get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", wallet_dict["id_symbol"])
@@ -89,9 +90,11 @@ def index():
 
     for dict in get_wallet_list:
         add_data_wallet_item(dict)
+        total_wallet_value += dict["total_value"]
 
+    # print(total_wallet_value)
 
-    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list)
+    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list, total_value=total_wallet_value)
 
 
 @app.route("/buy", methods=["GET", "POST"])

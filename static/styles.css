@@ -68,3 +68,8 @@ table
 {
     padding:10px 0 !important;
 }
+
+.total-value-row
+{
+    border-top: 2px solid #2c3e50;
+}
