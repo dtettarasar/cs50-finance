@@ -91,7 +91,7 @@ def index():
         add_data_wallet_item(dict)
 
 
-    return render_template("home.html", user_cash=cash_value)
+    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list)
 
 
 @app.route("/buy", methods=["GET", "POST"])
