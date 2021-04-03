@@ -73,9 +73,20 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
+
     get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
     cash_value = round(get_user_cash[0]["cash"], 2)
-    print(cash_value)
+    get_wallet_list = db.execute("SELECT * FROM wallets WHERE id_user = ?", session["user_id"])
+
+    def add_data_wallet_item(wallet_dict):
+        get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", wallet_dict["id_symbol"])
+        wallet_dict["label_symbol"] = get_symbol_label[0]["symbol"]
+        print(wallet_dict)
+
+    for dict in get_wallet_list:
+        add_data_wallet_item(dict)
+
+
     return render_template("home.html", user_cash=cash_value)
 
 
