@@ -41,13 +41,13 @@ db = SQL("sqlite:///finance.db")
 # Create additionnal tables in the database :
 
 # One table to record symbols (ID and Symbol)
-symbols_table = db.execute("CREATE TABLE IF NOT EXISTS symbols (id INTEGER, symbol TEXT NOT NULL, PRIMARY KEY(id))")
+symbols_table = db.execute("CREATE TABLE IF NOT EXISTS symbols (id INTEGER NOT NULL, symbol TEXT NOT NULL, PRIMARY KEY(id))")
 
 # One table to track transactions (ID, ID User, ID Symbol, Type(sale or purchase), shares, unit value)
-transactions_history_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_history (id INTEGER, id_symbol INTEGER, id_user INTEGER, id_transaction_type INTEGER, shares INTEGER, unit_value NUMERIC NOT NULL, transaction_dt DATE, PRIMARY KEY(id))")
+transactions_history_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_history (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, id_transaction_type INTEGER, shares INTEGER, unit_value NUMERIC NOT NULL, transaction_dt DATE, PRIMARY KEY(id))")
 
 # One table for transaction type
-transactions_type_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_type (id INTEGER, transaction_type TEXT NOT NULL, PRIMARY KEY(id))")
+transactions_type_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_type (id INTEGER NOT NULL, transaction_type TEXT NOT NULL, PRIMARY KEY(id))")
 
 # Create the initial transactions type values
 def create_transaction_type(type_value):
@@ -62,7 +62,7 @@ create_transaction_type("sale")
 PURCHASE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_type = ?", "purchase")
 
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
-wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
+wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -85,8 +85,6 @@ def buy():
         stock_symbol = request.form.get("symbol")
         stock_data = lookup(stock_symbol)
         stock_shares = int(request.form.get("shares"))
-
-        print(stock_data)
 
         if stock_data == None:
             return apology("invalid symbol", 403)
@@ -117,6 +115,20 @@ def buy():
 
         # update user's cash amount in db
         update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
+
+        # update user's wallets
+
+        # check first if the users already have shares from that stock
+        test_stock_bought = db.execute("SELECT * FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
+
+        if test_stock_bought == []:
+            insert_new_stock = db.execute("INSERT INTO wallets (id_symbol, id_user, shares) VALUES (?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], stock_shares)
+        else:
+            print (test_stock_bought)
+            owned_shares = test_stock_bought[0]["shares"]
+            new_shares = owned_shares + stock_shares
+            print(new_shares)
+            update_existing_stock = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
 
         #redirect user to homepage
         return redirect("/")
