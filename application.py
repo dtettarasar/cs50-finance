@@ -81,6 +81,10 @@ def index():
     def add_data_wallet_item(wallet_dict):
         get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", wallet_dict["id_symbol"])
         wallet_dict["label_symbol"] = get_symbol_label[0]["symbol"]
+        get_symbol_data = lookup(wallet_dict["label_symbol"])
+        wallet_dict["name_symbol"] = get_symbol_data["name"]
+        wallet_dict["price_symbol"] = get_symbol_data["price"]
+        wallet_dict["total_value"] = wallet_dict["price_symbol"] * wallet_dict["shares"]
         print(wallet_dict)
 
     for dict in get_wallet_list:
