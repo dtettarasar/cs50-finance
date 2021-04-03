@@ -94,7 +94,7 @@ def index():
 
     # print(total_wallet_value)
 
-    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list, total_value=total_wallet_value)
+    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list, total_value=round(total_wallet_value,2))
 
 
 @app.route("/buy", methods=["GET", "POST"])
