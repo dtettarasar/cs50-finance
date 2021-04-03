@@ -73,7 +73,10 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return render_template("home.html")
+    get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
+    cash_value = round(get_user_cash[0]["cash"], 2)
+    print(cash_value)
+    return render_template("home.html", user_cash=cash_value)
 
 
 @app.route("/buy", methods=["GET", "POST"])

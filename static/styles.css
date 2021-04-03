@@ -61,5 +61,10 @@ table
 
 .table-header th
 {
-    padding: 20px  0!important;
+    padding: 20px  0 !important;
+}
+
+.table-row td
+{
+    padding:10px 0 !important;
 }
