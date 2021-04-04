@@ -67,6 +67,17 @@ table
 .table-row td
 {
     padding:10px 0 !important;
+    color:#2c3e50;
+}
+
+.row-style-1
+{
+    background-color:#ecf0f1;
+}
+
+.row-style-2
+{
+    background-color:#bdc3c7;
 }
 
 .total-value-row
