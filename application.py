@@ -292,6 +292,16 @@ def sell():
     """Sell shares of stock"""
     if request.method == "POST":
 
+        stock_symbol = request.form.get("symbol")
+        stock_data = lookup(stock_symbol)
+        stock_shares = int(request.form.get("shares"))
+
+        if stock_shares <= 0:
+            return apology("invalid shares", 403)
+
+        print(stock_symbol)
+        print(stock_shares)
+
         #redirect user to homepage
         return redirect("/")
 
