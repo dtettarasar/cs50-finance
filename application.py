@@ -38,6 +38,9 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
+# Create initial user table
+users_table = db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, username TEXT NOT NULL, hash TEXT NOT NULL, cash NUMERIC NOT NULL DEFAULT 10000.00, PRIMARY KEY(id))")
+
 # Create additionnal tables in the database :
 
 # One table to record symbols (ID and Symbol)
@@ -60,6 +63,7 @@ create_transaction_type("purchase")
 create_transaction_type("sale")
 
 PURCHASE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_type = ?", "purchase")
+SALE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_type = ?", "sale")
 
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
 wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
@@ -155,10 +159,8 @@ def buy():
         if test_stock_bought == []:
             insert_new_stock = db.execute("INSERT INTO wallets (id_symbol, id_user, shares) VALUES (?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], stock_shares)
         else:
-            print (test_stock_bought)
             owned_shares = test_stock_bought[0]["shares"]
             new_shares = owned_shares + stock_shares
-            print(new_shares)
             update_existing_stock = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
 
         #redirect user to homepage
@@ -297,16 +299,21 @@ def sell():
         stock_shares = int(request.form.get("shares"))
         get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_symbol)
         get_wallet_shares = db.execute("SELECT shares FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
+        transaction_time = datetime.now()
 
         if stock_shares <= 0:
             return apology("invalid shares", 403)
         elif get_wallet_shares[0]["shares"] < stock_shares:
             return apology("not enough shares available to sell", 403)
 
-        print(stock_symbol)
-        print(get_symbol_id)
-        print(stock_shares)
-        print(get_wallet_shares)
+        # record a new transaction
+        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
+
+        # update wallet
+        new_shares =  get_wallet_shares[0]["shares"] - stock_shares
+        update_wallet_shares = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
+
+        print(stock_data)
 
         #redirect user to homepage
         return redirect("/")
