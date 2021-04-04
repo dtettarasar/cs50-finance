@@ -78,6 +78,7 @@ def index():
     cash_value = round(get_user_cash[0]["cash"], 2)
     get_wallet_list = db.execute("SELECT * FROM wallets WHERE id_user = ?", session["user_id"])
     total_wallet_value = cash_value
+    row_counter = 0
 
     def add_data_wallet_item(wallet_dict):
         get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", wallet_dict["id_symbol"])
@@ -86,11 +87,20 @@ def index():
         wallet_dict["name_symbol"] = get_symbol_data["name"]
         wallet_dict["price_symbol"] = get_symbol_data["price"]
         wallet_dict["total_value"] = round(wallet_dict["price_symbol"] * wallet_dict["shares"], 2)
-        print(wallet_dict)
 
     for dict in get_wallet_list:
         add_data_wallet_item(dict)
+        row_counter += 1
+        row_even_odd = row_counter % 2
+
+        if row_even_odd == 1:
+            dict["row_style"] = "row-style-1"
+        else:
+            dict["row_style"] = "row-style-2"
+
         total_wallet_value += dict["total_value"]
+
+        print(dict)
 
     # print(total_wallet_value)
 

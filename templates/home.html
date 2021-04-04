@@ -14,7 +14,7 @@
             <th>TOTAL</th>
         </tr>
         {% for dict in wallet_list %}
-            <tr class="table-row">
+            <tr class="table-row {{dict.row_style}}">
                 <td>{{dict.label_symbol}}</td>
                 <td>{{dict.name_symbol}}</td>
                 <td>{{dict.shares}}</td>
