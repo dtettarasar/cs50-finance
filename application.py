@@ -286,14 +286,15 @@ def register():
         return render_template("register.html")
 
 
-    # return apology("TODO")
-
-
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        return apology("TODO")
+
+    elif request.method == "GET":
+        return render_template("sell.html")
 
 
 def errorhandler(e):
