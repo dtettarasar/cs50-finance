@@ -313,6 +313,12 @@ def sell():
         new_shares =  get_wallet_shares[0]["shares"] - stock_shares
         update_wallet_shares = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
 
+        # update user cash
+        get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"]);
+        sale_value = stock_shares * stock_data["price"]
+        new_balance = get_user_cash[0]['cash'] + sale_value
+        update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
+
         print(stock_data)
 
         #redirect user to homepage
