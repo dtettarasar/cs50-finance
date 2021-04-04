@@ -300,6 +300,8 @@ def sell():
 
         if stock_shares <= 0:
             return apology("invalid shares", 403)
+        elif get_wallet_shares[0]["shares"] < stock_shares:
+            return apology("not enough shares available to sell", 403)
 
         print(stock_symbol)
         print(get_symbol_id)
