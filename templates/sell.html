@@ -5,5 +5,10 @@
 {% endblock %}
 
 {% block main %}
-    <p>to do : sell form</p>
+    <form action="/buy" method="post">
+        <div class="form-group">
+            <input min="1" required placeholder="Shares" type="number" autocomplete="off" class="form-control" name="shares">
+        </div>
+        <button class="btn btn-primary" type="submit">Sell</button>
+    </form>
 {% endblock %}
