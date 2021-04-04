@@ -291,7 +291,9 @@ def register():
 def sell():
     """Sell shares of stock"""
     if request.method == "POST":
-        return apology("TODO")
+
+        #redirect user to homepage
+        return redirect("/")
 
     elif request.method == "GET":
         get_id_symbols = db.execute("SELECT id_symbol FROM wallets WHERE id_user = ?", session["user_id"])
@@ -303,7 +305,7 @@ def sell():
 
         print(sorted(symbols_list))
 
-        return render_template("sell.html")
+        return render_template("sell.html", symbol_select = sorted(symbols_list))
 
 
 def errorhandler(e):
