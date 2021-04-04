@@ -295,12 +295,16 @@ def sell():
         stock_symbol = request.form.get("symbol")
         stock_data = lookup(stock_symbol)
         stock_shares = int(request.form.get("shares"))
+        get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_symbol)
+        get_wallet_shares = db.execute("SELECT shares FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
 
         if stock_shares <= 0:
             return apology("invalid shares", 403)
 
         print(stock_symbol)
+        print(get_symbol_id)
         print(stock_shares)
+        print(get_wallet_shares)
 
         #redirect user to homepage
         return redirect("/")
@@ -312,8 +316,6 @@ def sell():
         for dict in get_id_symbols:
             get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", dict["id_symbol"])
             symbols_list.append(get_symbol_label[0]["symbol"])
-
-        print(sorted(symbols_list))
 
         return render_template("sell.html", symbol_select = sorted(symbols_list))
 
