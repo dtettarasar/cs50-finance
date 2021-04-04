@@ -294,6 +294,15 @@ def sell():
         return apology("TODO")
 
     elif request.method == "GET":
+        get_id_symbols = db.execute("SELECT id_symbol FROM wallets WHERE id_user = ?", session["user_id"])
+        symbols_list = []
+
+        for dict in get_id_symbols:
+            get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", dict["id_symbol"])
+            symbols_list.append(get_symbol_label[0]["symbol"])
+
+        print(sorted(symbols_list))
+
         return render_template("sell.html")
 
 

@@ -5,7 +5,12 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/buy" method="post">
+    <form action="/sell" method="post">
+        <div class="form-group">
+            <select id="symbol" name="symbol">
+                <option selected disabled>Symbol</option>
+            </select>
+        </div>
         <div class="form-group">
             <input min="1" required placeholder="Shares" type="number" autocomplete="off" class="form-control" name="shares">
         </div>
