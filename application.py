@@ -85,7 +85,7 @@ def index():
         get_symbol_data = lookup(wallet_dict["label_symbol"])
         wallet_dict["name_symbol"] = get_symbol_data["name"]
         wallet_dict["price_symbol"] = get_symbol_data["price"]
-        wallet_dict["total_value"] = wallet_dict["price_symbol"] * wallet_dict["shares"]
+        wallet_dict["total_value"] = round(wallet_dict["price_symbol"] * wallet_dict["shares"], 2)
         print(wallet_dict)
 
     for dict in get_wallet_list:
