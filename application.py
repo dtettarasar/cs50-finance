@@ -68,6 +68,11 @@ SALE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_type = 
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
 wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
 
+# function to update user's wallet
+def update_wallet(wallet_share, stock_share, id_symbol):
+    new_shares = wallet_share + stock_share
+    update_wallet_db_request = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, id_symbol, session["user_id"])
+
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
@@ -160,8 +165,7 @@ def buy():
             insert_new_stock = db.execute("INSERT INTO wallets (id_symbol, id_user, shares) VALUES (?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], stock_shares)
         else:
             owned_shares = test_stock_bought[0]["shares"]
-            new_shares = owned_shares + stock_shares
-            update_existing_stock = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
+            update_wallet(owned_shares, stock_shares, get_symbol_id[0]["id"])
 
         #redirect user to homepage
         return redirect("/")
@@ -311,8 +315,7 @@ def sell():
         insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], negative_stock_shares, stock_data["price"], transaction_time)
 
         # update wallet
-        new_shares =  get_wallet_shares[0]["shares"] + negative_stock_shares
-        update_wallet_shares = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
+        update_wallet(get_wallet_shares[0]["shares"], negative_stock_shares, get_symbol_id[0]["id"])
 
         # update user cash
         get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"]);
