@@ -297,6 +297,7 @@ def sell():
         stock_symbol = request.form.get("symbol")
         stock_data = lookup(stock_symbol)
         stock_shares = int(request.form.get("shares"))
+        negative_stock_shares = stock_shares * -1
         get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_symbol)
         get_wallet_shares = db.execute("SELECT shares FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
         transaction_time = datetime.now()
@@ -307,10 +308,10 @@ def sell():
             return apology("not enough shares available to sell", 403)
 
         # record a new transaction
-        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
+        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], negative_stock_shares, stock_data["price"], transaction_time)
 
         # update wallet
-        new_shares =  get_wallet_shares[0]["shares"] - stock_shares
+        new_shares =  get_wallet_shares[0]["shares"] + negative_stock_shares
         update_wallet_shares = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, get_symbol_id[0]["id"], session["user_id"])
 
         # update user cash
