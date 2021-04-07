@@ -85,7 +85,7 @@ def index():
 
     get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
     cash_value = round(get_user_cash[0]["cash"], 2)
-    get_wallet_list = db.execute("SELECT * FROM wallets WHERE id_user = ?", session["user_id"])
+    get_wallet_list = db.execute("SELECT * FROM wallets WHERE id_user = ? AND shares > 0", session["user_id"])
     total_wallet_value = cash_value
     row_counter = 0
 
