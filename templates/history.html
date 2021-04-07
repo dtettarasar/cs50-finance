@@ -13,6 +13,15 @@
             <th>Price</th>
             <th>Date</th>
         </tr>
+        {% for dict in transaction_list %}
+        <tr class="table-row {{dict.row_style}}">
+            <td>{{dict.label_symbol}}</td>
+            <td>{{dict.transaction_type}}</td>
+            <td>{{dict.shares}}</td>
+            <td>${{dict.unit_value}}</td>
+            <td>{{dict.transaction_dt}}</td>
+        </tr>
+        {% endfor %}
 
     </table>
 {% endblock %}
