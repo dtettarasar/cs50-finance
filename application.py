@@ -329,7 +329,7 @@ def sell():
         return redirect("/")
 
     elif request.method == "GET":
-        get_id_symbols = db.execute("SELECT id_symbol FROM wallets WHERE id_user = ?", session["user_id"])
+        get_id_symbols = db.execute("SELECT id_symbol FROM wallets WHERE id_user = ? AND shares > 0", session["user_id"])
         symbols_list = []
 
         for dict in get_id_symbols:
