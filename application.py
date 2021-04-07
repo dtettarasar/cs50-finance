@@ -180,7 +180,35 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    return render_template("history.html")
+
+    transaction_list = db.execute("SELECT * FROM transactions_history WHERE id_user = ?", session["user_id"])
+    row_counter = 0
+
+    def add_data_transaction_list(transaction_dict):
+
+        get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", transaction_dict["id_symbol"])
+        transaction_dict["label_symbol"] = get_symbol_label[0]["symbol"]
+
+        get_transaction_type = db.execute("SELECT transaction_type FROM transactions_type WHERE id = ?", transaction_dict["id_transaction_type"])
+        transaction_dict["transaction_type"] = get_transaction_type[0]["transaction_type"]
+
+    for dict in transaction_list:
+
+        add_data_transaction_list(dict)
+        row_counter += 1
+        row_even_odd = row_counter % 2
+
+        print(row_counter)
+        print(row_even_odd)
+
+        if row_even_odd == 1:
+            dict["row_style"] = "row-style-1"
+        else:
+            dict["row_style"] = "row-style-2"
+
+        print(dict)
+
+    return render_template("history.html", transaction_list=transaction_list)
 
 
 @app.route("/login", methods=["GET", "POST"])
