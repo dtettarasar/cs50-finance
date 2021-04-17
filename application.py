@@ -73,6 +73,12 @@ def update_wallet(wallet_share, stock_share, id_symbol):
     new_shares = wallet_share + stock_share
     update_wallet_db_request = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, id_symbol, session["user_id"])
 
+#function to get user's cash
+def get_user_cash_func(user_id):
+    request = db.execute("SELECT cash FROM users WHERE id = ?", user_id)
+    user_cash = request[0]["cash"]
+    return user_cash
+
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
@@ -82,9 +88,8 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-
-    get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
-    cash_value = round(get_user_cash[0]["cash"], 2)
+    # get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
+    cash_value = round(get_user_cash_func(session["user_id"]), 2)
     get_wallet_list = db.execute("SELECT * FROM wallets WHERE id_user = ? AND shares > 0", session["user_id"])
     total_wallet_value = cash_value
     row_counter = 0
