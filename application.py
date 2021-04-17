@@ -175,6 +175,15 @@ def buy():
 
     #return apology("TODO")
 
+@app.route("/cash", methods=["GET", "POST"])
+@login_required
+def cash():
+    if request.method == "POST":
+
+        return apology("todo")
+
+    else:
+        return render_template("cash.html")
 
 @app.route("/history")
 @login_required
