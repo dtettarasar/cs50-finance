@@ -136,11 +136,13 @@ def buy():
         elif stock_shares <= 0:
             return apology("invalid shares", 403)
 
-        get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"]);
+        user_cash = get_user_cash_func(session["user_id"])
+
+        print(user_cash)
 
         cost = stock_shares * stock_data["price"]
 
-        if get_user_cash[0]['cash'] < cost:
+        if user_cash < cost:
             return apology("insufficient funds", 403)
 
         # record the symbol in our database
@@ -156,7 +158,7 @@ def buy():
         # record a new transaction
         insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], PURCHASE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
 
-        new_balance = get_user_cash[0]['cash'] - cost
+        new_balance = user_cash - cost
 
         # update user's cash amount in db
         update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
