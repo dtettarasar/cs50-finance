@@ -188,7 +188,8 @@ def cash():
         return apology("todo")
 
     else:
-        return render_template("cash.html")
+        user_cash = round(get_user_cash_func(session["user_id"]), 2)
+        return render_template("cash.html", user_cash=user_cash)
 
 @app.route("/history")
 @login_required
