@@ -138,8 +138,6 @@ def buy():
 
         user_cash = get_user_cash_func(session["user_id"])
 
-        print(user_cash)
-
         cost = stock_shares * stock_data["price"]
 
         if user_cash < cost:
@@ -308,9 +306,6 @@ def register():
 
         test_name_exist = db.execute("SELECT username FROM users WHERE username = ?", username)
 
-        # print(username, password, password_repeat)
-        # print(test_name_exist)
-
         if not username:
             return apology("must provide username", 403)
 
@@ -349,6 +344,7 @@ def sell():
         get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_symbol)
         get_wallet_shares = db.execute("SELECT shares FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
         transaction_time = datetime.now()
+        user_cash = get_user_cash_func(session["user_id"])
 
         if stock_shares <= 0:
             return apology("invalid shares", 403)
@@ -362,9 +358,8 @@ def sell():
         update_wallet(get_wallet_shares[0]["shares"], negative_stock_shares, get_symbol_id[0]["id"])
 
         # update user cash
-        get_user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"]);
         sale_value = stock_shares * stock_data["price"]
-        new_balance = get_user_cash[0]['cash'] + sale_value
+        new_balance = user_cash + sale_value
         update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
 
         print(stock_data)
