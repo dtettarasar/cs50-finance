@@ -79,6 +79,11 @@ def get_user_cash_func(user_id):
     user_cash = request[0]["cash"]
     return user_cash
 
+# function to update users' cash
+def update_user_cash_func(cash_balance):
+    request = db.execute("UPDATE users SET cash = ? WHERE id = ?", cash_balance, session["user_id"])
+
+
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
@@ -115,8 +120,6 @@ def index():
         total_wallet_value += dict["total_value"]
 
         print(dict)
-
-    # print(total_wallet_value)
 
     return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list, total_value=round(total_wallet_value,2))
 
@@ -159,7 +162,7 @@ def buy():
         new_balance = user_cash - cost
 
         # update user's cash amount in db
-        update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
+        update_user_cash_func(new_balance)
 
         # update user's wallets
 
@@ -177,8 +180,6 @@ def buy():
 
     else:
         return render_template("buy.html")
-
-    #return apology("TODO")
 
 @app.route("/cash", methods=["GET", "POST"])
 @login_required
@@ -203,11 +204,8 @@ def cash():
 
             new_balance = user_cash + cash_amount
 
-        update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
-
-        print(user_cash)
-        print(cash_action)
-        print(cash_amount, type(cash_amount))
+        #update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
+        update_user_cash_func(new_balance)
 
         #redirect user to homepage
         return redirect("/")
@@ -244,8 +242,6 @@ def history():
             dict["row_style"] = "row-style-1"
         else:
             dict["row_style"] = "row-style-2"
-
-        print(dict)
 
     return render_template("history.html", transaction_list=transaction_list)
 
@@ -307,7 +303,6 @@ def quote():
         quote_symbol = request.form.get("symbol")
         quote_data = lookup(quote_symbol)
 
-        # print(quote_data)
         if quote_data == None:
             return apology("invalid symbol", 403)
         else:
@@ -315,9 +310,6 @@ def quote():
 
     elif request.method == "GET":
         return render_template("quote.html")
-
-    # return apology("TODO")
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -385,9 +377,7 @@ def sell():
         # update user cash
         sale_value = stock_shares * stock_data["price"]
         new_balance = user_cash + sale_value
-        update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
-
-        print(stock_data)
+        update_user_cash_func(new_balance)
 
         #redirect user to homepage
         return redirect("/")
