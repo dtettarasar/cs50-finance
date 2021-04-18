@@ -195,6 +195,16 @@ def cash():
 
             return apology("not enough funds", 403)
 
+        elif cash_action == "withdrawal" and cash_amount <= user_cash:
+
+            new_balance = user_cash - cash_amount
+
+        elif cash_action == "deposit":
+
+            new_balance = user_cash + cash_amount
+
+        update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
+
         print(user_cash)
         print(cash_action)
         print(cash_amount, type(cash_amount))
