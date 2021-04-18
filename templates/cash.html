@@ -7,4 +7,22 @@
 {% block main %}
     <p class="funds-text" >Available funds:</p>
     <p class="funds-number" >${{user_cash}}</p>
+    <div class="separator"></div>
+    <p class="funds-text" >Update your funds:</p>
+    <form action="/cash" method="post">
+        <div class="form-group">
+            <div>
+              <input type="radio" id="deposit" name="cash-action" value="deposit"checked>
+              <label for="deposit">Deposit</label>
+            </div>
+            <div>
+              <input type="radio" id="withdrawal" name="cash-action" value="withdrawal"checked>
+              <label for="withdrawal">Withdrawal</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <input min="100" required placeholder="Amount" type="number" autocomplete="off" class="form-control" name="cash-amount">
+        </div>
+        <button class="btn btn-primary" type="submit">Update</button>
+    </form>
 {% endblock %}
