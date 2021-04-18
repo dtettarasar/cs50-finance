@@ -191,6 +191,10 @@ def cash():
         cash_action = request.form.get("cash-action")
         cash_amount = int(request.form.get("cash-amount"))
 
+        if cash_action == "withdrawal" and cash_amount > user_cash:
+
+            return apology("not enough funds", 403)
+
         print(user_cash)
         print(cash_action)
         print(cash_amount, type(cash_amount))
