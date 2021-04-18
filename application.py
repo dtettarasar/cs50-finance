@@ -183,12 +183,22 @@ def buy():
 @app.route("/cash", methods=["GET", "POST"])
 @login_required
 def cash():
+
+    user_cash = round(get_user_cash_func(session["user_id"]), 2)
+
     if request.method == "POST":
 
-        return apology("todo")
+        cash_action = request.form.get("cash-action")
+        cash_amount = int(request.form.get("cash-amount"))
+
+        print(user_cash)
+        print(cash_action)
+        print(cash_amount, type(cash_amount))
+
+        #redirect user to homepage
+        return redirect("/")
 
     else:
-        user_cash = round(get_user_cash_func(session["user_id"]), 2)
         return render_template("cash.html", user_cash=user_cash)
 
 @app.route("/history")
