@@ -218,7 +218,15 @@ def cash():
 def change_pwd():
 
     if request.method == "POST":
-        print("to do")
+
+        user_actual_pwd = request.form.get("password")
+        new_pwd = request.form.get("new-password")
+        new_pwd_rpt = request.form.get("new-password-repeat")
+
+        print(user_actual_pwd)
+        print(new_pwd)
+        print(new_pwd_rpt)
+
         return redirect("/")
 
     else:
