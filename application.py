@@ -219,13 +219,17 @@ def change_pwd():
 
     if request.method == "POST":
 
-        user_actual_pwd = request.form.get("password")
-        new_pwd = request.form.get("new-password")
-        new_pwd_rpt = request.form.get("new-password-repeat")
+        db_hash_pwd = db.execute("SELECT hash FROM users WHERE id = ?", session["user_id"])
+        db_actual_pwd = db_hash_pwd[0]["hash"]
+        form_actual_pwd = request.form.get("password")
+        form_new_pwd = request.form.get("new-password")
+        form_new_pwd_rpt = request.form.get("new-password-repeat")
 
-        print(user_actual_pwd)
-        print(new_pwd)
-        print(new_pwd_rpt)
+
+        print(form_actual_pwd)
+        print(form_new_pwd)
+        print(form_new_pwd_rpt)
+        print(db_hash_pwd)
 
         return redirect("/")
 
