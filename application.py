@@ -213,6 +213,17 @@ def cash():
     else:
         return render_template("cash.html", user_cash=user_cash)
 
+@app.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_pwd():
+
+    if request.method == "POST":
+        print("to do")
+        return redirect("/")
+
+    else:
+        return render_template("change-pwd.html")
+
 @app.route("/history")
 @login_required
 def history():
