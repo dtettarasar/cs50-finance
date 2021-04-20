@@ -87,15 +87,17 @@ table
 
 /* end styles for table */
 
-/* styles for cash page */
+/* styles for cash page & change pwd page */
 
 .funds-text,
-.funds-number
+.funds-number,
+.pwd-text
 {
     color: #2c3e50;
 }
 
-.funds-text
+.funds-text,
+.pwd-text
 {
     font-size: 1.5rem;
 }
