@@ -363,16 +363,16 @@ def register():
         test_name_exist = db.execute("SELECT username FROM users WHERE username = ?", username)
 
         if not username:
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
 
         elif test_name_exist:
-            return apology("username not available", 403)
+            return apology("username not available", 400)
 
         if not password:
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
 
         elif password != password_repeat:
-            return apology("Password and confirm password does not match", 403)
+            return apology("Password and confirm password does not match", 400)
 
         hashed_pw = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8);
 
