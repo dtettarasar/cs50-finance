@@ -343,7 +343,7 @@ def quote():
         quote_data = lookup(quote_symbol)
 
         if quote_data == None:
-            return apology("invalid symbol", 403)
+            return apology("invalid symbol", 400)
         else:
             return render_template("quoted.html", quote_data=quote_data)
 
