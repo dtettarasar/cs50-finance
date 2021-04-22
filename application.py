@@ -231,6 +231,10 @@ def change_pwd():
         print(form_new_pwd_rpt)
         print(db_hash_pwd)
 
+        # Ensure username exists and password is correct
+        if not check_password_hash(db_actual_pwd, form_actual_pwd):
+            return apology("invalid username and/or password", 403)
+
         return redirect("/")
 
     else:
