@@ -243,6 +243,10 @@ def change_pwd():
             return apology("New password and confirm password does not match", 403)
 
         else:
+
+            hashed_new_pw = generate_password_hash(form_new_pwd, method='pbkdf2:sha256', salt_length=8);
+            req_update_pwd = db.execute("UPDATE users SET hash = ? WHERE id = ?", hashed_new_pw, session["user_id"])
+
             return redirect("/")
 
     else:
@@ -371,9 +375,6 @@ def register():
             return apology("Password and confirm password does not match", 403)
 
         hashed_pw = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8);
-
-        print("hashed pw" + hashed_pw)
-        # print(check_password_hash(hashed_pw, password))
 
         insert_new_user = db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, hashed_pw)
 
