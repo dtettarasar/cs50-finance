@@ -358,7 +358,7 @@ def register():
 
         username = request.form.get("username")
         password = request.form.get("password")
-        password_repeat = request.form.get("password-repeat")
+        password_repeat = request.form.get("confirmation")
 
         test_name_exist = db.execute("SELECT username FROM users WHERE username = ?", username)
 
