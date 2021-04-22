@@ -225,7 +225,6 @@ def change_pwd():
         form_new_pwd = request.form.get("new-password")
         form_new_pwd_rpt = request.form.get("new-password-repeat")
 
-
         print(form_actual_pwd)
         print(form_new_pwd)
         print(form_new_pwd_rpt)
@@ -236,10 +235,15 @@ def change_pwd():
             return apology("invalid password", 403)
 
         # Ensure user has typed a new password
-        if form_actual_pwd == form_new_pwd:
+        elif form_actual_pwd == form_new_pwd:
             return apology("not a new password", 403)
 
-        return redirect("/")
+        # ensure password repeat is correct
+        elif form_new_pwd != form_new_pwd_rpt:
+            return apology("New password and confirm password does not match", 403)
+
+        else:
+            return redirect("/")
 
     else:
         return render_template("change-pwd.html")
