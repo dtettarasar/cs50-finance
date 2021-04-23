@@ -135,9 +135,9 @@ def buy():
         stock_shares = int(request.form.get("shares"))
 
         if stock_data == None:
-            return apology("invalid symbol", 403)
+            return apology("invalid symbol", 400)
         elif stock_shares <= 0:
-            return apology("invalid shares", 403)
+            return apology("invalid shares", 400)
 
         user_cash = get_user_cash_func(session["user_id"])
 
