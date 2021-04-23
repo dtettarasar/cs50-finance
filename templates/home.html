@@ -18,8 +18,8 @@
                 <td>{{dict.label_symbol}}</td>
                 <td>{{dict.name_symbol}}</td>
                 <td>{{dict.shares}}</td>
-                <td>${{dict.price_symbol}}</td>
-                <td>${{dict.total_value}}</td>
+                <td>{{dict.price_symbol | usd}}</td>
+                <td>{{dict.total_value | usd}}</td>
             </tr>
         {% endfor %}
         <tr class="table-row">
@@ -27,14 +27,14 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>${{user_cash}}</td>
+            <td>{{user_cash | usd}}</td>
         </tr>
         <tr class="table-row total-value-row">
             <td></td>
             <td></td>
             <td></td>
             <td></td>
-            <td><strong>${{total_value}}</strong></td>
+            <td><strong>{{total_value | usd}}</strong></td>
         </tr>
 
     </table>
