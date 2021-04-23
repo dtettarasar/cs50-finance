@@ -39,7 +39,8 @@ Session(app)
 db = SQL("sqlite:///finance.db")
 
 # Create initial user table
-users_table = db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, username TEXT NOT NULL, hash TEXT NOT NULL, cash NUMERIC NOT NULL DEFAULT 10000.00, PRIMARY KEY(id))")
+users_table = db.execute(
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER, username TEXT NOT NULL, hash TEXT NOT NULL, cash NUMERIC NOT NULL DEFAULT 10000.00, PRIMARY KEY(id))")
 
 # Create additionnal tables in the database :
 
@@ -47,17 +48,22 @@ users_table = db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, username
 symbols_table = db.execute("CREATE TABLE IF NOT EXISTS symbols (id INTEGER NOT NULL, symbol TEXT NOT NULL, PRIMARY KEY(id))")
 
 # One table to track transactions (ID, ID User, ID Symbol, Type(sale or purchase), shares, unit value)
-transactions_history_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_history (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, id_transaction_type INTEGER, shares INTEGER, unit_value NUMERIC NOT NULL, transaction_dt DATE, PRIMARY KEY(id))")
+transactions_history_table = db.execute(
+    "CREATE TABLE IF NOT EXISTS transactions_history (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, id_transaction_type INTEGER, shares INTEGER, unit_value NUMERIC NOT NULL, transaction_dt DATE, PRIMARY KEY(id))")
 
 # One table for transaction type
-transactions_type_table = db.execute("CREATE TABLE IF NOT EXISTS transactions_type (id INTEGER NOT NULL, transaction_type TEXT NOT NULL, PRIMARY KEY(id))")
+transactions_type_table = db.execute(
+    "CREATE TABLE IF NOT EXISTS transactions_type (id INTEGER NOT NULL, transaction_type TEXT NOT NULL, PRIMARY KEY(id))")
 
 # Create the initial transactions type values
+
+
 def create_transaction_type(type_value):
     check_value_exist = db.execute("SELECT transaction_type FROM transactions_type WHERE transaction_type = ?", type_value)
 
     if check_value_exist == []:
         create_new_value = db.execute("INSERT INTO transactions_type (transaction_type) VALUES (?)", type_value)
+
 
 create_transaction_type("purchase")
 create_transaction_type("sale")
@@ -66,20 +72,28 @@ PURCHASE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_typ
 SALE_ID = db.execute("SELECT id FROM transactions_type WHERE transaction_type = ?", "sale")
 
 # One table to manage users's wallet (ID, ID Symbol, ID User, shares)
-wallets_table = db.execute("CREATE TABLE IF NOT EXISTS wallets (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
+wallets_table = db.execute(
+    "CREATE TABLE IF NOT EXISTS wallets (id INTEGER NOT NULL, id_symbol INTEGER, id_user INTEGER, shares INTEGER, PRIMARY KEY(id))")
 
 # function to update user's wallet
+
+
 def update_wallet(wallet_share, stock_share, id_symbol):
     new_shares = wallet_share + stock_share
-    update_wallet_db_request = db.execute("UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, id_symbol, session["user_id"])
+    update_wallet_db_request = db.execute(
+        "UPDATE wallets SET shares = ? WHERE id_symbol = ? AND id_user = ?", new_shares, id_symbol, session["user_id"])
 
-#function to get user's cash
+# function to get user's cash
+
+
 def get_user_cash_func(user_id):
     request = db.execute("SELECT cash FROM users WHERE id = ?", user_id)
     user_cash = request[0]["cash"]
     return user_cash
 
 # function to update users' cash
+
+
 def update_user_cash_func(cash_balance):
     request = db.execute("UPDATE users SET cash = ? WHERE id = ?", cash_balance, session["user_id"])
 
@@ -121,7 +135,7 @@ def index():
 
         print(dict)
 
-    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list, total_value=round(total_wallet_value,2))
+    return render_template("home.html", user_cash=cash_value, wallet_list=get_wallet_list, total_value=round(total_wallet_value, 2))
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -160,7 +174,8 @@ def buy():
         transaction_time = datetime.now()
 
         # record a new transaction
-        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], PURCHASE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
+        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)",
+                                            get_symbol_id[0]["id"], session["user_id"], PURCHASE_ID[0]["id"], stock_shares, stock_data["price"], transaction_time)
 
         new_balance = user_cash - cost
 
@@ -170,19 +185,22 @@ def buy():
         # update user's wallets
 
         # check first if the users already have shares from that stock
-        test_stock_bought = db.execute("SELECT * FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
+        test_stock_bought = db.execute("SELECT * FROM wallets WHERE id_symbol = ? AND id_user = ?",
+                                       get_symbol_id[0]["id"], session["user_id"])
 
         if test_stock_bought == []:
-            insert_new_stock = db.execute("INSERT INTO wallets (id_symbol, id_user, shares) VALUES (?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], stock_shares)
+            insert_new_stock = db.execute("INSERT INTO wallets (id_symbol, id_user, shares) VALUES (?, ?, ?)",
+                                          get_symbol_id[0]["id"], session["user_id"], stock_shares)
         else:
             owned_shares = test_stock_bought[0]["shares"]
             update_wallet(owned_shares, stock_shares, get_symbol_id[0]["id"])
 
-        #redirect user to homepage
+        # redirect user to homepage
         return redirect("/")
 
     else:
         return render_template("buy.html")
+
 
 @app.route("/cash", methods=["GET", "POST"])
 @login_required
@@ -207,14 +225,14 @@ def cash():
 
             new_balance = user_cash + cash_amount
 
-        #update_user_cash = db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session["user_id"])
         update_user_cash_func(new_balance)
 
-        #redirect user to homepage
+        # redirect user to homepage
         return redirect("/")
 
     else:
         return render_template("cash.html", user_cash=user_cash)
+
 
 @app.route("/change-password", methods=["GET", "POST"])
 @login_required
@@ -255,6 +273,7 @@ def change_pwd():
     else:
         return render_template("change-pwd.html")
 
+
 @app.route("/history")
 @login_required
 def history():
@@ -268,7 +287,9 @@ def history():
         get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", transaction_dict["id_symbol"])
         transaction_dict["label_symbol"] = get_symbol_label[0]["symbol"]
 
-        get_transaction_type = db.execute("SELECT transaction_type FROM transactions_type WHERE id = ?", transaction_dict["id_transaction_type"])
+        get_transaction_type = db.execute("SELECT transaction_type FROM transactions_type WHERE id = ?",
+                                          transaction_dict["id_transaction_type"])
+
         transaction_dict["transaction_type"] = get_transaction_type[0]["transaction_type"]
 
     for dict in transaction_list:
@@ -353,6 +374,7 @@ def quote():
     elif request.method == "GET":
         return render_template("quote.html")
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -377,7 +399,7 @@ def register():
         elif password != password_repeat:
             return apology("Password and confirm password does not match", 400)
 
-        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8);
+        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
         insert_new_user = db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, hashed_pw)
 
@@ -398,7 +420,8 @@ def sell():
         stock_shares = int(request.form.get("shares"))
         negative_stock_shares = stock_shares * -1
         get_symbol_id = db.execute("SELECT id FROM symbols WHERE symbol = ?", stock_symbol)
-        get_wallet_shares = db.execute("SELECT shares FROM wallets WHERE id_symbol = ? AND id_user = ?", get_symbol_id[0]["id"], session["user_id"])
+        get_wallet_shares = db.execute("SELECT shares FROM wallets WHERE id_symbol = ? AND id_user = ?",
+                                       get_symbol_id[0]["id"], session["user_id"])
         transaction_time = datetime.now()
         user_cash = get_user_cash_func(session["user_id"])
 
@@ -408,7 +431,8 @@ def sell():
             return apology("not enough shares available to sell", 400)
 
         # record a new transaction
-        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], negative_stock_shares, stock_data["price"], transaction_time)
+        insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)",
+                                            get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], negative_stock_shares, stock_data["price"], transaction_time)
 
         # update wallet
         update_wallet(get_wallet_shares[0]["shares"], negative_stock_shares, get_symbol_id[0]["id"])
@@ -418,7 +442,7 @@ def sell():
         new_balance = user_cash + sale_value
         update_user_cash_func(new_balance)
 
-        #redirect user to homepage
+        # redirect user to homepage
         return redirect("/")
 
     elif request.method == "GET":
@@ -429,7 +453,7 @@ def sell():
             get_symbol_label = db.execute("SELECT symbol FROM symbols WHERE id = ?", dict["id_symbol"])
             symbols_list.append(get_symbol_label[0]["symbol"])
 
-        return render_template("sell.html", symbol_select = sorted(symbols_list))
+        return render_template("sell.html", symbol_select=sorted(symbols_list))
 
 
 def errorhandler(e):
