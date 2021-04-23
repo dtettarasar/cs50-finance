@@ -132,7 +132,10 @@ def buy():
 
         stock_symbol = request.form.get("symbol")
         stock_data = lookup(stock_symbol)
-        stock_shares = int(request.form.get("shares"))
+        try:
+            stock_shares = int(request.form.get("shares"))
+        except ValueError:
+            return apology("shares must be a positive integer", 400)
 
         if stock_data == None:
             return apology("invalid symbol", 400)
