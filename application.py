@@ -403,9 +403,9 @@ def sell():
         user_cash = get_user_cash_func(session["user_id"])
 
         if stock_shares <= 0:
-            return apology("invalid shares", 403)
+            return apology("invalid shares", 400)
         elif get_wallet_shares[0]["shares"] < stock_shares:
-            return apology("not enough shares available to sell", 403)
+            return apology("not enough shares available to sell", 400)
 
         # record a new transaction
         insert_new_transaction = db.execute("INSERT INTO transactions_history (id_symbol, id_user, id_transaction_type, shares, unit_value, transaction_dt) VALUES (?, ?, ?, ?, ?, ?)", get_symbol_id[0]["id"], session["user_id"], SALE_ID[0]["id"], negative_stock_shares, stock_data["price"], transaction_time)

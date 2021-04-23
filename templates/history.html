@@ -18,7 +18,7 @@
             <td>{{dict.label_symbol}}</td>
             <td>{{dict.transaction_type}}</td>
             <td>{{dict.shares}}</td>
-            <td>${{dict.unit_value}}</td>
+            <td>{{dict.unit_value | usd}}</td>
             <td>{{dict.transaction_dt}}</td>
         </tr>
         {% endfor %}
